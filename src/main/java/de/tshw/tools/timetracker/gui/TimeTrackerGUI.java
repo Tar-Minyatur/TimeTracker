@@ -9,13 +9,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ContainerAdapter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 
 public class TimeTrackerGUI implements ListSelectionListener {
     private JButton addProjectButton;
@@ -24,11 +17,19 @@ public class TimeTrackerGUI implements ListSelectionListener {
     private JTable projectsTable;
     private JPanel timeTrackerPanel;
     private JScrollPane projectTableScrollPane;
+    private JToolBar toolbar;
+    private JButton editCommentButton;
 
     private ProjectsTableBean projectsTableData;
     private GuiController controller;
 
+    private ImageIcon playButton;
+    private ImageIcon pauseButton;
+
     public TimeTrackerGUI() {
+        this.playButton = new ImageIcon(ClassLoader.getSystemResource("icons/clock_play.png"), "Start timer");
+        this.pauseButton = new ImageIcon(ClassLoader.getSystemResource("icons/clock_pause.png"), "Pause timer");
+
         toggleTimerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -47,6 +48,12 @@ public class TimeTrackerGUI implements ListSelectionListener {
                 if ((projectName != null) && (projectName.length() > 0)) {
                     controller.addProject(projectName);
                 }
+            }
+        });
+        editCommentButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO: Implement comment editing
             }
         });
     }
@@ -91,9 +98,11 @@ public class TimeTrackerGUI implements ListSelectionListener {
         this.toggleTimerButton.setEnabled(timerCanBeStarted);
         this.updateTotalTime();
         if (this.controller.isTimerRunning()) {
-            this.toggleTimerButton.setText("Pause Timer");
+            this.toggleTimerButton.setIcon(this.pauseButton);
+            this.toggleTimerButton.setToolTipText("Pause timer");
         } else {
-            this.toggleTimerButton.setText("Start Timer");
+            this.toggleTimerButton.setIcon(this.playButton);
+            this.toggleTimerButton.setToolTipText("Start timer");
         }
     }
 
