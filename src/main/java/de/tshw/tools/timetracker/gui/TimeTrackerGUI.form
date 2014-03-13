@@ -98,6 +98,18 @@
               <toolTipText value="Comment current working period"/>
             </properties>
           </component>
+          <component id="55cbe" class="javax.swing.JToolBar$Separator">
+            <constraints/>
+            <properties/>
+          </component>
+          <component id="3d499" class="javax.swing.JButton" binding="workingPeriodsExplorerButton">
+            <constraints/>
+            <properties>
+              <horizontalAlignment value="4"/>
+              <text value="WP"/>
+              <toolTipText value="Show working period browser"/>
+            </properties>
+          </component>
         </children>
       </toolbar>
     </children>

@@ -2,11 +2,13 @@ package de.tshw.tools.timetracker.gui;
 
 import de.tshw.tools.timetracker.controller.GuiController;
 import de.tshw.tools.timetracker.util.DateUtil;
+import org.hibernate.Session;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -19,6 +21,7 @@ public class TimeTrackerGUI implements ListSelectionListener {
     private JScrollPane projectTableScrollPane;
     private JToolBar toolbar;
     private JButton editCommentButton;
+    private JButton workingPeriodsExplorerButton;
 
     private ProjectsTableBean projectsTableData;
     private GuiController controller;
@@ -26,7 +29,14 @@ public class TimeTrackerGUI implements ListSelectionListener {
     private ImageIcon playButton;
     private ImageIcon pauseButton;
 
-    public TimeTrackerGUI() {
+    private Session dbSession;
+
+    private JDialog workingPeriodsExplorer;
+    private WorkingPeriodExplorer workingPeriodExplorerModel;
+
+    public TimeTrackerGUI(Session dbSession) {
+        this.dbSession = dbSession;
+
         this.playButton = new ImageIcon(ClassLoader.getSystemResource("icons/clock_play.png"), "Start timer");
         this.pauseButton = new ImageIcon(ClassLoader.getSystemResource("icons/clock_pause.png"), "Pause timer");
 
@@ -44,7 +54,7 @@ public class TimeTrackerGUI implements ListSelectionListener {
         addProjectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String projectName = JOptionPane.showInputDialog("Project Name:");
+                String projectName = JOptionPane.showInputDialog(timeTrackerPanel, "Project Name:");
                 if ((projectName != null) && (projectName.length() > 0)) {
                     controller.addProject(projectName);
                 }
@@ -56,6 +66,30 @@ public class TimeTrackerGUI implements ListSelectionListener {
                 // TODO: Implement comment editing
             }
         });
+        workingPeriodsExplorerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               showWorkingPeriodsExplorer();
+            }
+        });
+    }
+
+    private void showWorkingPeriodsExplorer() {
+        if (this.workingPeriodsExplorer == null) {
+            this.setupWorkingPeriodsExplorer();
+        }
+        Point frameLocation = this.getTimeTrackerPanel().getTopLevelAncestor().getLocation();
+        Dimension frameDimension = this.getTimeTrackerPanel().getTopLevelAncestor().getSize();
+        Point targetLocation = new Point(frameLocation.x + frameDimension.width, frameLocation.y);
+        this.workingPeriodsExplorer.setLocation(targetLocation);
+        this.workingPeriodsExplorer.setVisible(true);
+    }
+
+    private void setupWorkingPeriodsExplorer() {
+        this.workingPeriodsExplorer = new JDialog((JFrame) this.timeTrackerPanel.getTopLevelAncestor(), "NullTimeTracker - Working Periods", false);
+        this.workingPeriodExplorerModel = new WorkingPeriodExplorer(this.dbSession);
+        this.workingPeriodsExplorer.getContentPane().add(this.workingPeriodExplorerModel.getPeriodExplorer());
+        this.workingPeriodsExplorer.pack();
     }
 
     public void setProjectsTableData(ProjectsTableBean projectsTableData) {

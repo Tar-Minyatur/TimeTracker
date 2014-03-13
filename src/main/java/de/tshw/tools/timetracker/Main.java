@@ -12,6 +12,7 @@ import org.hibernate.Transaction;
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 public class Main {
@@ -23,7 +24,8 @@ public class Main {
         final Session session = sessionFactory.openSession();
 
         JFrame jFrame = new JFrame("NullTimeTracker");
-        final TimeTrackerGUI timeTrackerGUI = new TimeTrackerGUI();
+        jFrame.setIconImage(new ImageIcon(ClassLoader.getSystemResource("icons/clock_play.png")).getImage());
+        final TimeTrackerGUI timeTrackerGUI = new TimeTrackerGUI(session);
         jFrame.getContentPane().add(timeTrackerGUI.getTimeTrackerPanel());
         jFrame.addWindowListener(new WindowAdapter() {
             @Override
